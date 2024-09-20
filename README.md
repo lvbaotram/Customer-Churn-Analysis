@@ -19,13 +19,15 @@ The main steps for this project are:
 There are likely some null values in this dataset because each customer has their own unique subscription preferences. Including these null values in my analysis is intentional and helps me give a more detailed and complete understanding of Maven's customer base.
 
 I checked for duplicate values in the unique key (Customer_ID), and found none.
-```-- Total Number of customers
+```
+-- Total Number of customers
 SELECT
 COUNT(DISTINCT Customer_ID) AS customer_count
 FROM
-dbo.churn```
+dbo.churn
+```
 
-![](https://github.com/user-attachments/assets/a0749dac-2097-4663-bc27-5959adb589a8)
+![]()
 
 ## Insights
 ## Customer Retention Strategies
