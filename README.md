@@ -24,6 +24,7 @@ SELECT
 COUNT(DISTINCT Customer_ID) AS customer_count
 FROM
 dbo.churn```
+
 ![q1](https://github.com/user-attachments/assets/a0749dac-2097-4663-bc27-5959adb589a8)
 
 ## Insights
