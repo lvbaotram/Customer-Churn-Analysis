@@ -27,7 +27,7 @@ FROM
 dbo.churn
 ```
 
-![]()
+![](https://github.com/user-attachments/assets/51da7dd1-f50a-4b42-b5c8-ffd25cb40bdd)
 
 ## Insights
 ## Customer Retention Strategies
