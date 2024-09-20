@@ -126,6 +126,113 @@ ORDER BY
 ```
 ![](https://github.com/user-attachments/assets/e8788639-0a14-4141-affe-df0cd99027e0)
 #### 5a. Specific reasons for churn
+The top 3 reasons for churn are ‘Competitor made **better offer**’, ‘Competitor had **better devices**’ and ‘**Attitude** of support person’.
+```
+-- why exactly did customers churn?
+SELECT TOP 5
+    Churn_Reason,
+    Churn_Category,
+    ROUND(COUNT(Customer_ID) *100 / SUM(COUNT(Customer_ID)) OVER(), 1) AS churn_percentage
+FROM
+    dbo.churn
+WHERE
+    Customer_Status = 'Churned'
+GROUP BY 
+Churn_Reason,
+Churn_Category
+ORDER BY churn_percentage DESC;
+```
+![q6](https://github.com/user-attachments/assets/de596305-78ca-4bbe-9917-7e138248a306)
+
+#### 5b. What offers did churned customers have?
+56% of churners did not have any promotional offer while 23% had Offer E. Offers are a great way to reward and retain your loyal customers.
+```
+-- What offers did churners have?
+SELECT  
+    Offer,
+    ROUND(COUNT(Customer_ID) * 100.0 / SUM(COUNT(Customer_ID)) OVER(), 1) AS churned
+FROM
+    dbo.churn
+WHERE
+    Customer_Status = 'Churned'
+GROUP BY
+Offer
+ORDER BY 
+churned DESC;
+```
+![q7](https://github.com/user-attachments/assets/5bb6d202-1b60-4c52-a53a-c1684f7b0cf9)
+
+#### 5c. What internet type did churned have?
+66% of all churned customers used Fiber Optic. While ~70% of customers who left for competitors also used Fiber Optic. Maven should review the quality and service of their Fiber Optic internet, as this could be the reason customers are leaving to competitors.
+```
+-- What Internet Type did churners have?
+SELECT
+    Internet_Type,
+    COUNT(Customer_ID) AS Churned,
+    ROUND(COUNT(Customer_ID) * 100.0 / SUM(COUNT(Customer_ID)) OVER(), 1) AS Churn_Percentage
+FROM
+    dbo.churn
+WHERE 
+    Customer_Status = 'Churned'
+GROUP BY
+Internet_Type
+ORDER BY 
+Churned DESC;
+
+-- What Internet Type did 'Competitor' churners have?
+SELECT
+    Internet_Type,
+    Churn_Category,
+    ROUND(COUNT(Customer_ID) * 100.0 / SUM(COUNT(Customer_ID)) OVER(), 1) AS Churn_Percentage
+FROM
+    dbo.churn
+WHERE 
+    Customer_Status = 'Churned'
+    AND Churn_Category = 'Competitor'
+GROUP BY
+Internet_Type,
+Churn_Category
+ORDER BY Churn_Percentage DESC;
+```
+![q8](https://github.com/user-attachments/assets/279d19f5-b396-448d-a0b1-2416801527b8)
+![q9](https://github.com/user-attachments/assets/4f65be3d-6709-4539-9378-ae76f23c27bc)
+#### 5d. Did churned have premium tech support?
+77% of churned customers did not have premium tech support. It’s possible that this service could have improved their after-sales experience and reduced churn.
+```
+-- Did churners have premium tech support?
+SELECT 
+    Premium_Tech_Support,
+    COUNT(Customer_ID) AS Churned,
+    ROUND(COUNT(Customer_ID) *100.0 / SUM(COUNT(Customer_ID)) OVER(),1) AS Churn_Percentage
+FROM
+    dbo.churn
+WHERE 
+    Customer_Status = 'Churned'
+GROUP BY Premium_Tech_Support
+ORDER BY Churned DESC;
+```
+![q10](https://github.com/user-attachments/assets/15a2d5f1-4480-493e-a11b-45c9973e13a4)
+
+#### 5e. What contract were churners on?
+Almost all churned customers (89%) were on the month-to-month contract.
+
+Customers on a month-to-month contract are more likely to churn, as they have greater flexibility to cancel or switch providers without incurring any penalty.
+```
+-- What contract were churners on?
+SELECT 
+    Contract,
+    COUNT(Customer_ID) AS Churned,
+    ROUND(COUNT(Customer_ID) * 100.0 / SUM(COUNT(Customer_ID)) OVER(), 1) AS Churn_Percentage
+FROM 
+    dbo.churn
+WHERE
+    Customer_Status = 'Churned'
+GROUP BY
+    Contract
+ORDER BY 
+    Churned DESC;
+```
+![q11](https://github.com/user-attachments/assets/07bfb585-6124-4610-9f5a-c25ecbfdf37f)
 
 ## III. Insights
 ## IV. Customer Retention Strategies
