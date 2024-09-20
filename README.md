@@ -1,11 +1,11 @@
 # Telecom Customer Churn Analysis
-## Introduction
+## I. Introduction
 The telecom industry is highly competitive, and customers have a wide selection of options to choose from. Companies rely heavily on customer retention to ensure continued growth and success. However, losing customers, also known as churn, is inevitable in any industry. As a data analyst, my job is to provide an in-depth analysis of Maven Telecom’s churn dataset and to answer the following questions:
 * What are the key drivers of churn?
 * Is the company losing high value customers? If so, how can they retain them?
 * What is the ideal profile of a churned customer?
 * What steps can Maven Telecom take to reduce churn?
-## Project Strategy
+## II. Project Strategy
 I downloaded the dataset from Maven Analytics and it contained information about customer demographics, subscription plans and account records for Maven Telecom. I performed all data preparation and analysis using SQL (DBeaver), and all the SQL codes will be provided below. The visualisations and dashboard were designed with Tableau.
 
 The main steps for this project are:
@@ -51,6 +51,37 @@ GROUP BY Customer_Status
 ```
 ![](https://github.com/user-attachments/assets/cbac999f-db6e-4020-b7db-16b4cff53a4a)
 
+#### 2. What's the typical tenure for churned customers?
+To find out how long customers usually stay at Maven before leaving, I used a CASE statement in SQL. This CASE statement creates a new column (Tenure) and groups customers who leave the company in 12 months or less as ‘12 months,’ and so on.
 
-## Insights
-## Customer Retention Strategies
+I found that ~42% of churned customers spent 6 months or less at Maven before leaving.
+
+Nearly half of the customers who left had a short time with the company, meaning Maven has a chance to improve customer retention, especially with new customers. 
+
+```
+-- Typical tenure for new customers?
+SELECT
+    CASE 
+        WHEN Tenure_in_Months <= 6 THEN '6 months'
+        WHEN Tenure_in_Months <= 12 THEN '1 Year'
+        WHEN Tenure_in_Months <= 24 THEN '2 Years'
+        ELSE '> 2 Years'
+    END AS Tenure,
+    ROUND(COUNT(Customer_ID) * 100.0 / SUM(COUNT(Customer_ID)) OVER(),1) AS Churn_Percentage
+FROM
+dbo.churn
+WHERE
+Customer_Status = 'Churned'
+GROUP BY
+    CASE 
+        WHEN Tenure_in_Months <= 6 THEN '6 months'
+        WHEN Tenure_in_Months <= 12 THEN '1 Year'
+        WHEN Tenure_in_Months <= 24 THEN '2 Years'
+        ELSE '> 2 Years'
+    END
+ORDER BY
+Churn_Percentage DESC;
+```
+![](https://github.com/user-attachments/assets/297eb9c5-6a06-49d6-bbcf-000087fc3dac)
+## III. Insights
+## IV. Customer Retention Strategies
