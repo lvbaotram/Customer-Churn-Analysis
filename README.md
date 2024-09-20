@@ -234,5 +234,87 @@ ORDER BY
 ```
 ![q11](https://github.com/user-attachments/assets/07bfb585-6124-4610-9f5a-c25ecbfdf37f)
 
+The **key churn indicators** are therefore:
+* **Contract**: 89% of churned customers were on the month-to-month contract
+* **Premium Tech Support**: 77% of churners did not have premium tech support
+* **Internet Type**: 66% of churners used Fiber Optic internet
+* **Offer**: 56% of churners did not have any promotional offers, while 23% had Offer E.
+#### 6. Are high value customers at risk of churning?
+I defined high value customers based on these factors and grouped them into 3 risk levels (High, Medium, Low):
+
+* Tenure: This is a measure of loyalty, so I only considered customers that have been with the company for at least 9 months.
+
+* Monthly Charge: If the customer’s total monthly charge is in the top 50th percentile.
+
+* Referrals: customers who refer other customers to the business.
+
+High-value customers with 3–4 churn indicators are High Risk, while Medium Risk customers have 2 and Low Risk customers have only 1. For instance, a high-value customer at high risk of churning may use fiber optic, have a month-to-month contract, and no promotional offers or premium tech support.
+```
+-- Are high value customers at risk?
+SELECT 
+    CASE 
+        WHEN (num_conditions >= 3) THEN 'High Risk'
+        WHEN num_conditions = 2 THEN 'Medium Risk'
+        ELSE 'Low Risk'
+    END AS risk_level,
+    COUNT(Customer_ID) AS num_customers,
+    ROUND(COUNT(Customer_ID) *100.0 / SUM(COUNT(Customer_ID)) OVER(),1) AS cust_percentage,
+    num_conditions  
+FROM 
+    (
+    SELECT 
+        Customer_ID,
+        SUM(CASE WHEN Offer = 'Offer E' OR Offer = 'None' THEN 1 ELSE 0 END)+
+        SUM(CASE WHEN Contract = 'Month-to-Month' THEN 1 ELSE 0 END) +
+        SUM(CASE WHEN Premium_Tech_Support = 'No' THEN 1 ELSE 0 END) +
+        SUM(CASE WHEN Internet_Type = 'Fiber Optic' THEN 1 ELSE 0 END) AS num_conditions
+    FROM 
+        dbo.churn
+    WHERE 
+        Monthly_Charge > 70.05 
+        AND Customer_Status = 'Stayed'
+        AND Number_of_Referrals > 0
+        AND Tenure_in_Months > 9
+    GROUP BY 
+        Customer_ID
+    HAVING 
+        SUM(CASE WHEN Offer = 'Offer E' OR Offer = 'None' THEN 1 ELSE 0 END) +
+        SUM(CASE WHEN Contract = 'Month-to-Month' THEN 1 ELSE 0 END) +
+        SUM(CASE WHEN Premium_Tech_Support = 'No' THEN 1 ELSE 0 END) +
+        SUM(CASE WHEN Internet_Type = 'Fiber Optic' THEN 1 ELSE 0 END) >= 1
+    ) AS subquery
+GROUP BY 
+    CASE 
+        WHEN (num_conditions >= 3) THEN 'High Risk'
+        WHEN num_conditions = 2 THEN 'Medium Risk'
+        ELSE 'Low Risk'
+    END, num_conditions; 
+```
+![Q12](https://github.com/user-attachments/assets/f6b8de1b-c9e0-41b7-8451-b6af8eeee772)
+#### 7. Building the ideal churn customer profile
+I built a simple churn profile using the key churn indicators I discussed in previous sections, and the churn demographic results below:
+
+* 32% of churned customers are above 60 years old
+* ~50% of churned customers are Female
+* 64% of churned customers are Single
+* 94% of churned customers have no dependents in their household; it’s possible they have more flexibility and fewer commitments, making it easier for them to switch providers or cancel their subscription.
+  
+You can view the sql codes for the demographic results here.
 ## III. Insights
+* Maven has 1869 churned customers and 20% of them are high-value customers.
+* 42% of churned customers only stayed for 6 months or less.
+* The top 3 reasons for churn are competitors made better offers, competitors had better devices and attitude of support staff.
+* Maven lost ~$1.7 million to competitors, making it the most expensive type of churn
+* The key indicators of churn are Month-to-Month contract , No Premium Tech Support, Fiber Optic internet, No promotional offer and Offer E.
+* 70% of customers who churned to competitors used Fiber Optic
+* High value customers are churning at a rate of 23%
+* Based on the key churn indicators, out of 1250 high-value customers remaining, 77% are at high risk of churning.
 ## IV. Customer Retention Strategies
+* Loyalty Programs: Since the top reason for churn is ‘competitors making better offers’ , and more than half of churned customers did not have any promotional offers, Maven could implement different loyalty programs to retain their customers. For instance, they could reward customers on long-term contracts with discounted rates, free upgrade, or additional features.
+* Improve Customer Support: Invest in training and development of support staff to ensure they provide excellent customer service. This could include regular coaching and feedback sessions, as well as incentives for staff who receive positive customer feedback.
+* Make better devices: Evaluate the features, performance and pricing of your devices to ensure they are in line with market standards and demand.
+* Premium Tech Support: Since customers who did not have access to premium tech support were more likely to churn, Maven should consider offering this service to all customers.
+* Improve Fiber Optic Service: Invest in improving your Fiber Optic offerings like faster speeds, more stable connections, and better customer support for Fiber Optic customers.
+* Engage High-Value Customers: Prioritise engaging these customers to prevent them from leaving. Provide personalised offers, send targeted communications, and provide premium tech support to ensure these customers remain satisfied with their service.
+* After-Sales Service: Schedule regular check-ins with customers to ensure they are still satisfied with their service. These check-ins could be in the form of surveys, phone calls, or email communications.
+Thanks for reading!
