@@ -1,2 +1,5 @@
 # Customer-Churn-Analysis
-A repository for customer churn analysis using SQL
+## Introduction
+## Project Strategy
+## Insights
+## Customer Retention Strategies
