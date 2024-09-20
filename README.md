@@ -25,9 +25,32 @@ SELECT
 COUNT(DISTINCT Customer_ID) AS customer_count
 FROM
 dbo.churn
+
+-- check for duplicates in customer ID
+SELECT Customer_ID,
+COUNT( Customer_ID )as count
+FROM dbo.churn
+GROUP BY Customer_ID
+HAVING count(Customer_ID) > 1;
 ```
 
+
 ![](https://github.com/user-attachments/assets/51da7dd1-f50a-4b42-b5c8-ffd25cb40bdd)
+
+### Exploratory Analysis
+There are 7043 customers in total
+#### 1. How much revenue was lost to churned customers?
+Maven lost 1869 customers and they accounted for 17% of Maven's total revenue. It's a pretty significant figure and we'll investigate why they are leaving later on in this project.
+
+```
+-- How much revenue did maven lose to churned customer?
+SELECT Customer_Status, COUNT(Customer_ID) AS customer_count,
+ROUND((SUM(Total_Revenue) * 100.0) / SUM(SUM(Total_Revenue)) OVER(), 1) AS Revenue_Percentage 
+FROM dbo.churn
+GROUP BY Customer_Status
+```
+![](https://github.com/user-attachments/assets/cbac999f-db6e-4020-b7db-16b4cff53a4a)
+
 
 ## Insights
 ## Customer Retention Strategies
